@@ -28,5 +28,7 @@ urlpatterns = [
     path('summarize-demo/', views.summarize_demo, name='summarize_demo'),
     path('sentiment-demo/', views.sentiment_demo, name='sentiment_demo'),
     path('analyze-sentiment/', views.analyze_sentiment_ajax, name='analyze_sentiment_ajax'),
+    path('translate-demo/', views.translate_demo, name='translate_demo'),
+    path('translate-post/<str:p_id>/', views.translate_post, name='translate_post'),
 
 ]

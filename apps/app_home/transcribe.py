@@ -72,3 +72,23 @@ def sentiment_analysis(text: str):
         return None
 
 
+def translate_text(text: str, dest_lang: str = 'en') -> str:
+    """
+    Translate the input text to the specified language (default English).
+    Requires googletrans (pip install googletrans==4.0.0rc1)
+    """
+    try:
+        from googletrans import Translator
+        translator = Translator()
+        print(f"[AI Translate] Translating '{text}' to '{dest_lang}'")
+        result = translator.translate(text, dest=dest_lang)
+        print(f"[AI Translate] Translation result: {result.text}")
+        return result.text
+    except ImportError:
+        print("[AI Translate] googletrans not installed. Run 'pip install googletrans==4.0.0rc1'")
+        return "[Translation unavailable: googletrans not installed]"
+    except Exception as e:
+        print(f"[AI Translate] ERROR: {e}")
+        return f"[Translation error: {e}]"
+
+

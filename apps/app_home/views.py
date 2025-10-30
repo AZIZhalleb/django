@@ -16,7 +16,7 @@ from datetime import timedelta
 from .moderation import is_toxic_text
 from .transcribe import transcribe_video
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 import json
 
 # UPDATED: 8/06/2025
@@ -749,3 +749,28 @@ def analyze_sentiment_ajax(request):
     else:
         sentiment = 'neutral'
     return JsonResponse({'sentiment': sentiment, 'polarity': polarity, 'subjectivity': result['subjectivity']})
+
+def translate_demo(request):
+    from .transcribe import translate_text
+    text = "Welcome to Bloome! This platform lets you share your thoughts with the world."
+    fr = translate_text(text, 'fr')
+    es = translate_text(text, 'es')
+    ar = translate_text(text, 'ar')
+    html = f"""
+        <h3>Original (English):</h3><p>{text}</p>
+        <h3>French:</h3><p>{fr}</p>
+        <h3>Spanish:</h3><p>{es}</p>
+        <h3>Arabic:</h3><p>{ar}</p>
+    """
+    return HttpResponse(html)
+
+@require_GET
+def translate_post(request, p_id):
+    from .transcribe import translate_text
+    lang = request.GET.get('lang', 'en')
+    try:
+        data = Posts.objects.get(uid=p_id)
+        translation = translate_text(data.content or '', lang)
+        return JsonResponse({'translation': translation})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
