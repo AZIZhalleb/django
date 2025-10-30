@@ -19,3 +19,4 @@ DATABASES = {
 }
 # Whitenoise for static files
 MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
