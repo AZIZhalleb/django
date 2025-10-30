@@ -128,7 +128,11 @@
        
       
 <div class="col-lg-8 vstack gap-4">
-  <div id="chat-pane"><!-- HTMX will paint here --></div>
+  <div id="chat-pane">
+    {% if other_user %}
+      {% include 'chat/_conversation.html' %}
+    {% endif %}
+  </div>
 </div>
 
  

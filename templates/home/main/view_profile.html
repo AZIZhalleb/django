@@ -31,7 +31,7 @@
                 <!-- Button -->
                 <div class="d-flex mt-3 justify-content-center ms-sm-auto">
                   {% if its_user_himself %}
-                  <button class="btn btn-danger-soft me-2" type="button"> <i class="bi bi-pencil-fill pe-1"></i> Edit profile </button>
+                  <a class="btn btn-danger-soft me-2" href="{% url 'settings' %}"> <i class="bi bi-pencil-fill pe-1"></i> Edit profile </a>
                   {% else %}                
                     {% if the_profile in my_friend_req_list %}                  
                       <a class="btn btn-primary-soft me-2" type="button"> <i class="bi bi-check pe-1"></i> Accept </a>
@@ -196,16 +196,30 @@
                     <div class="row g-3">
                       {% for image in data.images.all|slice:":1" %}
                       <div class="col-6">
+                          {% if image.is_video %}
+                          <video class="rounded img-fluid" controls src="{{ image.image.url }}"></video>
+                          {% if image.transcript %}
+                          <div class="small text-muted mt-1">{{ image.transcript|truncatechars:220 }}</div>
+                          {% endif %}
+                          {% else %}
                           <a class="" href="{{image.image.url}}" data-glightbox="" data-gallery="image-popup">
                               <img class="rounded img-fluid" src="{{image.image.url}}" alt="Image">
                           </a>
+                          {% endif %}
                       </div>
                       {% endfor %}
                       <div class="col-6">
                           {% for image in data.images.all|slice:"1:2" %}
+                          {% if image.is_video %}
+                          <video class="rounded img-fluid" controls src="{{ image.image.url }}"></video>
+                          {% if image.transcript %}
+                          <div class="small text-muted mt-1">{{ image.transcript|truncatechars:220 }}</div>
+                          {% endif %}
+                          {% else %}
                           <a href="{{image.image.url}}" data-glightbox="" data-gallery="image-popup">
                               <img class="rounded img-fluid" src="{{image.image.url}}" alt="Image">
                           </a>
+                          {% endif %}
                           {% endfor %}
                           {% for image in data.images.all|slice:"2:3" %}
                           <div class="position-relative bg-dark mt-3 rounded">

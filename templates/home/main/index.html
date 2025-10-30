@@ -68,16 +68,16 @@
                 <!-- Side Nav START -->
                 <ul class="nav nav-link-secondary flex-column fw-bold gap-2">
                 <li class="nav-item">
-                    <a class="nav-link" href="#"> <img class="me-2 h-20px fa-fw" src="{% static "images/feed.svg" %}" alt=""><span>My Feed </span></a>
+                    <a class="nav-link" href="{% url 'homepage' %}"> <img class="me-2 h-20px fa-fw" src="{% static "images/feed.svg" %}" alt=""><span>My Feed </span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#"> <img class="me-2 h-20px fa-fw" src="{% static "images/group.svg" %}" alt=""><span>Groups </span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"> <img class="me-2 h-20px fa-fw" src="{% static "images/notify.svg" %}" alt=""><span>Notifications </span></a>
+                    <a class="nav-link" href="{% url 'notification_list' %}"> <img class="me-2 h-20px fa-fw" src="{% static "images/notify.svg" %}" alt=""><span>Notifications </span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"> <img class="me-2 h-20px fa-fw" src="{% static "images/settings.svg" %}" alt=""><span>Settings </span></a>
+                    <a class="nav-link" href="{% url 'settings' %}"> <img class="me-2 h-20px fa-fw" src="{% static "images/settings.svg" %}" alt=""><span>Settings </span></a>
                 </li>
                 </ul>
                 <!-- Side Nav END -->
@@ -305,7 +305,7 @@
 
                 {% for ppl in got_requests %}
                 <!-- Connection item START -->
-                <div class="hstack gap-2 mb-3">
+                <div class="hstack gap-2 mb-3" id="fr-{{ppl.uid}}">
                     <!-- Avatar -->
                     <div class="avatar">
                         <a href="#!"><img class="avatar-img rounded-circle" src="{{ppl.sender.profile_picture.url}}" alt=""></a>
@@ -316,7 +316,15 @@
                         <p class="mb-0 small text-truncate">{{ppl.sender.user.username}}</p>
                     </div>
                     <!-- Button -->
-                    <a class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="{% url "accept_req" ppl.sender.user.username %}"><i class="fa-solid fa-plus"> </i></a>
+                    <form method="POST" action="{% url "accept_req" ppl.sender.user.username %}"
+                          hx-post="{% url "accept_req" ppl.sender.user.username %}"
+                          hx-target="#fr-{{ppl.uid}}"
+                          hx-swap="outerHTML">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary-soft rounded-circle icon-md ms-auto">
+                            <i class="fa-solid fa-plus"> </i>
+                        </button>
+                    </form>
                     <a class="btn btn-danger-soft rounded-circle icon-md ms-auto" href="#"><i class="bi bi-x-octagon-fill"></i></a>
                 </div>
                 <!-- Connection item END -->
@@ -358,7 +366,7 @@
                 </div>
                 <!-- Button -->
                 
-                <a class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="#"><i class="bi bi-chat-fill"></i></a>
+                <a class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="{% url 'messages' frnd.user.username %}"><i class="bi bi-chat-fill"></i></a>
             </div>
             <!-- Connection item END -->
             {% endfor %}
@@ -382,5 +390,8 @@
     <!-- Right sidebar END -->
 
     {% include "home/partials/create_post.html" %}
+    {% include "home/partials/video_modal.html" %}
+    {% include "home/partials/event_modal.html" %}
     {% include "home/partials/likers_modal.html" %}
+    {% include "home/partials/feeling_modal.html" %}
 {% endblock content %}

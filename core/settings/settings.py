@@ -21,7 +21,7 @@ LOGIN_URL = "/auth/login/"
 
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-secret-key')
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 INSTALLED_APPS = [
     # ------- Created and 3rd party apps ---------

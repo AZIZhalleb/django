@@ -35,7 +35,8 @@ class Posts(CommonBaseModel):
 
 class PostImage(CommonBaseModel):
     post = models.ForeignKey(Posts, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to=UserContentPath('post_images', include_date=True))
+    image = models.FileField(upload_to=UserContentPath('post_media', include_date=True))
+    transcript = models.TextField(blank=True, null=True)
 
     author = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="post_images", null=True, blank=True)
     
@@ -43,6 +44,11 @@ class PostImage(CommonBaseModel):
         if not self.author:
             self.author = self.post.author
         super().save(*args, **kwargs)
+
+    @property
+    def is_video(self) -> bool:
+        name = (self.image.name or '').lower()
+        return name.endswith(('.mp4', '.webm', '.ogg', '.mov', '.m4v'))
 
 
 class Like(CommonBaseModel):
@@ -98,3 +104,14 @@ class FriendRequests(CommonBaseModel):
 
     def __str__(self):
         return f" {self.sender.first_name} Request to - {self.author.first_name}"
+
+
+class SavedPost(CommonBaseModel):
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='saved_posts')
+    post = models.ForeignKey(Posts, on_delete=models.CASCADE, related_name='saved_by')
+
+    class Meta:
+        unique_together = ('user', 'post')
+
+    def __str__(self):
+        return f"{self.user} saved {self.post}"

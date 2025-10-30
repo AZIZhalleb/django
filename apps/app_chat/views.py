@@ -92,3 +92,19 @@ def chat_room(request, room_name):
     if request.headers.get('Hx-Request'):
         return render(request, 'chat/_conversation.html', context)
     return render(request, 'chat/main/messenger.html', context)
+
+
+@login_required
+def send_message_api(request, room_name):
+    if request.method != 'POST':
+        return HttpResponse(status=405)
+
+    other_user = get_object_or_404(User, username=room_name)
+    text = request.POST.get('message', '').strip()
+    if not text:
+        return HttpResponse(status=400)
+
+    msg = Message.objects.create(sender=request.user, receiver=other_user, content=text)
+
+    # Return a single message row HTML to append
+    return render(request, 'chat/_row.html', {'msg': msg})

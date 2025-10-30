@@ -11,7 +11,7 @@
 					<!-- Feed box  -->
 					{{form.content}}
 				</div>
-				<div id="photo-xyxy">
+                <div id="media-xyxy">
 
 				</div>
 				<div class="hstack gap-2">
@@ -19,8 +19,8 @@
 				<ul class="nav nav-pills nav-stack small fw-normal mt-1">
 					<li class="nav-item">
 						<a 
-						hx-get="{% url "add_post_images" i %}"
-						hx-target="#photo-xyxy"
+                        hx-get="{% url "add_post_media" i 'image' %}"
+                        hx-target="#media-xyxy"
 						hx-swap="innerHTML"
 						class="nav-link bg-light py-1 px-2 mb-0" 
 						href="#post" >
@@ -39,14 +39,19 @@
 					</a>
 					</li> {% endcomment %}
 					
-					<li class="nav-item">
-					<a class="nav-link bg-light py-1 px-2 mb-0" href="#" data-bs-toggle="modal" data-bs-target="#feedActionVideo"> <i class="bi bi-camera-reels-fill text-info pe-2"></i>Video</a>
-					</li>
+                    <li class="nav-item">
+                    <a class="nav-link bg-light py-1 px-2 mb-0"
+                       href="#media"
+                       hx-get="{% url 'add_post_media' i 'video' %}"
+                       hx-target="#media-xyxy"
+                       hx-swap="innerHTML">
+                       <i class="bi bi-camera-reels-fill text-info pe-2"></i>Video</a>
+                    </li>
 					<li class="nav-item">
 					<a href="#" class="nav-link bg-light py-1 px-2 mb-0" data-bs-toggle="modal" data-bs-target="#modalCreateEvents"> <i class="bi bi-calendar2-event-fill text-danger pe-2"></i>Event </a>
 					</li>
 					<li class="nav-item">
-					<a class="nav-link bg-light py-1 px-2 mb-0" href="#" data-bs-toggle="modal" data-bs-target="#modalCreateFeed"> <i class="bi bi-emoji-smile-fill text-warning pe-2"></i>Feeling /Activity</a>
+                    <a class="nav-link bg-light py-1 px-2 mb-0" href="#" data-bs-toggle="modal" data-bs-target="#modalFeeling"> <i class="bi bi-emoji-smile-fill text-warning pe-2"></i>Feeling /Activity</a>
 					</li>	
 				</ul>				
 				</div>

@@ -98,7 +98,12 @@
         <div class="col-lg-6 vstack gap-4">
           <!-- Setting Tab content START -->
           <div class="tab-content py-0 mb-0" id="tab-option-to-change">
-
+            <div 
+              hx-get="{% url "setting_tabs" 'profile' %}"
+              hx-target="#tab-option-to-change"
+              hx-swap="innerHTML"
+              hx-trigger="load">
+            </div>
           </div>          
         </div>
 

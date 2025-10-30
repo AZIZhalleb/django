@@ -80,9 +80,37 @@
     const text  = input.value.trim();
     if (!text) return;
 
-    chatSocket.send(JSON.stringify({ message: text }));
-    input.value = '';
+    if (chatSocket.readyState === WebSocket.OPEN) {
+      chatSocket.send(JSON.stringify({ message: text }));
+      input.value = '';
+      return;
+    }
+
+    // HTTP fallback if WS not connected
+    const formData = new FormData();
+    formData.append('message', text);
+    fetch(`/chat/api/send/${encodeURIComponent(roomName)}/`, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': (document.cookie.match(/csrftoken=([^;]+)/)||[])[1] || '' },
+      body: formData
+    }).then(r => {
+      if (!r.ok) throw new Error('send failed');
+      return r.text();
+    }).then(html => {
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = html;
+      const node = wrapper.firstElementChild;
+      if (node) {
+        chatBody.appendChild(node);
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+      input.value = '';
+    }).catch(console.error);
   });
+
+  chatSocket.onopen  = () => console.log('WS open');
+  chatSocket.onerror = (e) => console.error('WS error', e);
+  chatSocket.onclose  = () => console.log('WS closed');
 
   /* always start scrolled to bottom */
   chatBody.scrollTop = chatBody.scrollHeight;

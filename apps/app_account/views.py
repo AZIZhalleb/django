@@ -1,4 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
+from django.urls import reverse
 from apps.app_users.models import Profile, User
 from apps.app_home.models import Friends, PostImage
 from apps.app_users.forms import ProfileForm
@@ -43,7 +44,12 @@ def setting_tabs(request, option):
                 if form.is_valid():
                     form.save()
                     messages.success(request,"Profile was updated successfully!")
-                    return redirect("setting_tabs", option="profile")
+                    # Redirect back to profile after saving
+                    profile_url = reverse('view_profile', args=[request.user.username])
+                    if request.htmx:
+                        # Ask htmx to navigate
+                        return HttpResponse(status=204, headers={"HX-Redirect": profile_url})
+                    return redirect(profile_url)
                 else:
                     print(form.errors)
             else:

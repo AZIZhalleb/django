@@ -20,7 +20,11 @@
 					</div>
 					<!-- Feed box  -->
 					<form class="w-100">
-						<textarea class="form-control pe-4 fs-3 lh-1 border-0" rows="4" placeholder="Share your thoughts..." autofocus=""></textarea>
+						<textarea class="form-control pe-4 fs-3 lh-1 border-0"
+								  id="ai-post-content"
+								  rows="4"
+								  placeholder="Share your thoughts..." autofocus=""></textarea>
+						<div id="ai-sentiment-feedback" class="mt-2"></div>
 					</form>
 				</div>
 				<!-- Feed rect START -->
@@ -60,4 +64,53 @@
 	</div>
 </div>
 <!-- Modal create feed END -->
+
+<script>
+function attachSentimentListener() {
+    const txt = document.getElementById('ai-post-content');
+    const feedback = document.getElementById('ai-sentiment-feedback');
+    if (!txt || !feedback) return;
+    let timer = null;
+    txt.addEventListener('input', function() {
+        if (timer) clearTimeout(timer);
+        const value = txt.value;
+        if (!value.trim()) {
+            feedback.innerHTML = '';
+            return;
+        }
+        timer = setTimeout(function() {
+            fetch('/analyze-sentiment/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: 'content=' + encodeURIComponent(value),
+            })
+            .then(r => r.json())
+            .then(d => {
+                if (d.error) {
+                    feedback.innerHTML = '<span class="text-danger">AI sentiment check unavailable</span>';
+                } else {
+                    let color = d.sentiment === 'positive' ? 'success' : (d.sentiment === 'negative' ? 'danger' : 'secondary');
+                    let icon = d.sentiment === 'positive' ? '😊' : (d.sentiment === 'negative' ? '😞' : '😐');
+                    feedback.innerHTML = `<span class="badge bg-${color} p-2"><b>${icon} ${d.sentiment.charAt(0).toUpperCase() + d.sentiment.slice(1)}</b> (Polarity: ${d.polarity.toFixed(2)})</span>`;
+                }
+            })
+            .catch(() => {
+                feedback.innerHTML = '<span class="text-danger">AI error (network)</span>';
+            });
+        }, 500);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var modal = document.getElementById('modalCreateFeed');
+    if (modal) {
+        modal.addEventListener('shown.bs.modal', function () {
+            attachSentimentListener();
+        });
+    }
+});
+</script>
 
